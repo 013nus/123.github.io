@@ -189,30 +189,39 @@
 </main>
 
 <script>
-  // 安全的全局切换函数
-  function showSection(section) {
-    if (!section) {
-      console.warn('showSection: section is null or undefined');
-      return;
-    }
-    document.querySelectorAll("main section").forEach(sec => sec.classList.add("hidden"));
-    section.classList.remove("hidden");
-    console.log('showSection ->', section.id);
-  }
+  // 安全的全局切换函数
+  function showSection(sectionId) {
+    // 隐藏所有内容区域
+    document.querySelectorAll("main section").forEach(sec => {
+      sec.classList.add("hidden");
+    });
+    // 显示指定的内容区域
+    const targetSection = document.getElementById(sectionId);
+    if (targetSection) {
+      targetSection.classList.remove("hidden");
+    }
+  }
 
-  // 等 DOM 就绪后再绑定事件（避免元素未就绪导致无法绑定）
-  document.addEventListener('DOMContentLoaded', function() {
-    const btnAbout = document.getElementById("btnAbout");
-    const btnPhilosophy = document.getElementById("btnPhilosophy");
-    const btnSupport = document.getElementById("btnSupport");
+  // 等 DOM 就绪后再绑定事件
+  document.addEventListener('DOMContentLoaded', function() {
+    const btnAbout = document.getElementById("btnAbout");
+    const btnPhilosophy = document.getElementById("btnPhilosophy");
+    const btnSupport = document.getElementById("btnSupport");
 
-    const introSection = document.getElementById("introSection");
-    const aboutSection = document.getElementById("aboutSection");
-    const philosophySection = document.getElementById("philosophySection");
-    const supportSection = document.getElementById("supportSection");
+    // 给按钮添加点击事件监听器
+    btnAbout.addEventListener('click', function() {
+      // 点击“关于我”按钮时，显示 id 为 "aboutSection" 的内容
+      showSection('aboutSection');
+    });
 
-    // 初始显示主页
-    introSection.classList.remove('hidden');
-    about
+    btnPhilosophy.addEventListener('click', function() {
+      // 点击“我的理念”按钮时，显示 id 为 "philosophySection" 的内容
+      showSection('philosophySection');
+    });
 
-
+    btnSupport.addEventListener('click', function() {
+      // 点击“支持”按钮时，显示 id 为 "supportSection" 的内容
+      showSection('supportSection');
+    });
+  });
+</script>
