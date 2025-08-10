@@ -111,6 +111,184 @@
     <p>欢迎来到我的个人网站！这里是我的简单介绍区。</p>
   </section>
 
+<!-- ======= 鼠标飞机 第1步（直接放到你的 index.html 的 main 内） ======= -->
+<section id="gameSection">
+  <h2 style="margin:0 0 8px 0;">驾驶练习（桌面端支持）</h2>
+  <p id="touchNotice" style="color:#666; display:none; margin-top:0;">
+    检测到触屏设备（手机/平板），为节省流量与性能，交互已禁用。请用电脑体验完整效果。
+  </p>
+  <div style="width:100%; max-width:900px;">
+    <canvas id="gameCanvas" style="width:100%; height:420px; display:block; border-radius:8px; background:#081029;"></canvas>
+  </div>
+</section>
+
+<script>
+(function(){
+  // 检测触屏设备，手机端不启动交互
+  const isTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0 || navigator.maxTouchPoints === 1;
+  const touchNotice = document.getElementById('touchNotice');
+  const canvas = document.getElementById('gameCanvas');
+  const ctx = canvas.getContext('2d');
+
+  if (isTouch) {
+    if (touchNotice) touchNotice.style.display = 'block';
+    // 仍要设置画布尺寸以免布局问题，但不绑定交互
+    function sizeCanvas() {
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = canvas.clientWidth * dpr;
+      canvas.height = canvas.clientHeight * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      // 静态绘制一个提示
+      ctx.fillStyle = '#0b1220';
+      ctx.fillRect(0,0,canvas.clientWidth, canvas.clientHeight);
+      ctx.fillStyle = '#9fb4ff';
+      ctx.font = '16px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('触屏设备已禁用实时交互，请使用电脑体验', canvas.clientWidth/2, canvas.clientHeight/2);
+    }
+    window.addEventListener('resize', sizeCanvas);
+    sizeCanvas();
+    return; // 不加载交互脚本
+  }
+
+  // ----- canvas 高 DPI 自适应 -----
+  function resizeCanvas() {
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = canvas.clientWidth * dpr;
+    canvas.height = canvas.clientHeight * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  // 鼠标位置（飞机位置）
+  const mouse = { x: canvas.clientWidth/2, y: canvas.clientHeight/2 };
+  let hasMouse = false;
+
+  canvas.addEventListener('mousemove', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    mouse.x = e.clientX - rect.left;
+    mouse.y = e.clientY - rect.top;
+    hasMouse = true;
+  });
+  canvas.addEventListener('mouseleave', () => { hasMouse = false; });
+
+  // 平滑跟随：飞机不是瞬移，而是有惯性
+  const player = {
+    x: canvas.clientWidth/2,
+    y: canvas.clientHeight/2,
+    vx: 0, vy: 0,
+    size: 16,      // 半宽度
+    color: '#ffffff'
+  };
+
+  // 帧率和时间
+  let lastTime = performance.now();
+
+  // 绘制背景（简单星空 + 赛道线条）
+  function drawBackground() {
+    const w = canvas.clientWidth, h = canvas.clientHeight;
+    // 背景渐变
+    const g = ctx.createLinearGradient(0,0,0,h);
+    g.addColorStop(0, '#081029');
+    g.addColorStop(1, '#081623');
+    ctx.fillStyle = g;
+    ctx.fillRect(0,0,w,h);
+
+    // 赛道中线（细）
+    ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    for (let i = 0; i < 20; i++) {
+      const y = (i / 19) * h;
+      ctx.moveTo(0, y + (performance.now() * 0.02 % 20));
+      ctx.lineTo(w, y + (performance.now() * 0.02 % 20));
+    }
+    ctx.stroke();
+  }
+
+  // 绘制“玩家飞机” — 三角形，朝向鼠标移动方向
+  function drawPlayer() {
+    const px = player.x, py = player.y;
+    // 计算朝向角度（面向鼠标）
+    const dx = mouse.x - px, dy = mouse.y - py;
+    const angle = Math.atan2(dy, dx) + Math.PI / 2; // 调整为指向上方的三角形基线
+
+    ctx.save();
+    ctx.translate(px, py);
+    ctx.rotate(angle);
+
+    // 机身（白色）
+    ctx.beginPath();
+    ctx.moveTo(0, -player.size);           // Nose
+    ctx.lineTo(player.size * 0.7, player.size);
+    ctx.lineTo(-player.size * 0.7, player.size);
+    ctx.closePath();
+    ctx.fillStyle = player.color;
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(0,0,0,0.2)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // 引擎光（小火焰）
+    ctx.beginPath();
+    ctx.moveTo(-player.size * 0.35, player.size);
+    ctx.lineTo(0, player.size + 8 + Math.sin(performance.now()/120)*2);
+    ctx.lineTo(player.size * 0.35, player.size);
+    ctx.closePath();
+    const flameG = ctx.createLinearGradient(0, player.size, 0, player.size + 12);
+    flameG.addColorStop(0, 'rgba(255,200,60,0.95)');
+    flameG.addColorStop(1, 'rgba(255,90,20,0.6)');
+    ctx.fillStyle = flameG;
+    ctx.fill();
+
+    ctx.restore();
+  }
+
+  // 主循环：更新位置并绘制
+  function loop(now) {
+    const dt = Math.min(40, now - lastTime); // ms
+    lastTime = now;
+
+    // 平滑移动：用差值（LERP）或物理惯性
+    if (hasMouse) {
+      const ax = (mouse.x - player.x) * 0.12;
+      const ay = (mouse.y - player.y) * 0.12;
+      player.vx += ax;
+      player.vy += ay;
+      // 阻尼
+      player.vx *= 0.86;
+      player.vy *= 0.86;
+      player.x += player.vx * (dt / 16);
+      player.y += player.vy * (dt / 16);
+    } else {
+      // 慢慢停下
+      player.vx *= 0.9;
+      player.vy *= 0.9;
+      player.x += player.vx * (dt / 16);
+      player.y += player.vy * (dt / 16);
+    }
+
+    // 限制在画布内
+    const pad = 12;
+    player.x = Math.max(pad, Math.min(canvas.clientWidth - pad, player.x));
+    player.y = Math.max(pad, Math.min(canvas.clientHeight - pad, player.y));
+
+    // 绘制
+    drawBackground();
+    // 可以在这里绘制其他元素（敌机、子弹）— 下个步骤添加
+    drawPlayer();
+
+    requestAnimationFrame(loop);
+  }
+
+  // 启动循环
+  requestAnimationFrame(loop);
+
+})(); // IIFE end
+</script>
+
+  
   <section id="aboutSection" class="hidden">
     <h2>关于我</h2>
     <div class="qrcode-container">
@@ -166,5 +344,6 @@
 </html>
 
 </script>
+
 
 
