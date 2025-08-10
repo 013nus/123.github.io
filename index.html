@@ -24,6 +24,8 @@
     display: flex;
     flex-direction: column;
     align-items: stretch;
+    position: relative;      /* <- 确保不被覆盖 */
+    z-index: 1000;           /* <- 提升到最上层 */
   }
 
   /* 按钮样式 */
@@ -56,6 +58,7 @@
     padding: 30px;
     box-sizing: border-box;
     animation: fadeIn 0.5s ease;
+    position: relative;
   }
 
   @keyframes fadeIn {
@@ -86,6 +89,7 @@
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     transition: transform 0.3s ease;
+    background: white;
   }
 
   .qrcode:hover {
@@ -136,9 +140,9 @@
 <body>
 
 <nav>
-  <button id="btnAbout">关于我</button>
-  <button id="btnPhilosophy">我的理念</button>
-  <button id="btnSupport">支持</button>
+  <button id="btnAbout" aria-label="关于我">关于我</button>
+  <button id="btnPhilosophy" aria-label="我的理念">我的理念</button>
+  <button id="btnSupport" aria-label="支持">支持</button>
 </nav>
 
 <main>
@@ -185,23 +189,30 @@
 </main>
 
 <script>
-  const btnAbout = document.getElementById("btnAbout");
-  const btnPhilosophy = document.getElementById("btnPhilosophy");
-  const btnSupport = document.getElementById("btnSupport");
-
-  const introSection = document.getElementById("introSection");
-  const aboutSection = document.getElementById("aboutSection");
-  const philosophySection = document.getElementById("philosophySection");
-  const supportSection = document.getElementById("supportSection");
-
+  // 安全的全局切换函数
   function showSection(section) {
-    introSection.classList.add("hidden");
-    aboutSection.classList.add("hidden");
-    philosophySection.classList.add("hidden");
-    supportSection.classList.add("hidden");
+    if (!section) {
+      console.warn('showSection: section is null or undefined');
+      return;
+    }
+    document.querySelectorAll("main section").forEach(sec => sec.classList.add("hidden"));
     section.classList.remove("hidden");
+    console.log('showSection ->', section.id);
   }
 
-  btnAbout.addEventLis
+  // 等 DOM 就绪后再绑定事件（避免元素未就绪导致无法绑定）
+  document.addEventListener('DOMContentLoaded', function() {
+    const btnAbout = document.getElementById("btnAbout");
+    const btnPhilosophy = document.getElementById("btnPhilosophy");
+    const btnSupport = document.getElementById("btnSupport");
+
+    const introSection = document.getElementById("introSection");
+    const aboutSection = document.getElementById("aboutSection");
+    const philosophySection = document.getElementById("philosophySection");
+    const supportSection = document.getElementById("supportSection");
+
+    // 初始显示主页
+    introSection.classList.remove('hidden');
+    about
 
 
