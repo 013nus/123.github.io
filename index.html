@@ -65,29 +65,51 @@
 <body>
 
 <nav>
-  <button id="btnAbout">关于我</button>
-  <button id="btnPhilosophy">我的理念</button>
+  <button onclick="showSection('aboutSection')">关于我</button>
+  <button onclick="showSection('ideaSection')">我的理念</button>
 </nav>
 
 <main>
+  <!-- 主页介绍 -->
   <section id="introSection">
-    <h1>hey!i am Obnus!Welcome my page!</h1>
+    <h1>hey! i am Obnus! Welcome my page!</h1>
     <p>欢迎来到我的个人网站！这里是我的简单介绍区。</p>
   </section>
 
- <section id="aboutSection" class="hidden">
-  <h2>关于我</h2>
-  <div class="qrcode-container">
-    <div>
-      <p>微信二维码</p>
-      <img src="photos/weixin.jpg" alt="微信二维码" class="qrcode" />
+  <!-- 关于我 -->
+  <section id="aboutSection" class="hidden">
+    <h2>关于我</h2>
+    <div class="qrcode-container">
+      <div>
+        <p>微信二维码</p>
+        <img src="photos/weixin.jpg" alt="微信二维码" class="qrcode" />
+      </div>
+      <div>
+        <p>抖音二维码</p>
+        <img src="photos/douyin.jpg" alt="抖音二维码" class="qrcode" />
+      </div>
     </div>
-    <div>
-      <p>抖音二维码</p>
-      <img src="photos/douyin.jpg" alt="抖音二维码" class="qrcode" />
-    </div>
-  </div>
-</section>
+  </section>
+
+  <!-- 我的理念 -->
+  <section id="ideaSection" class="hidden">
+    <p class="center-blue-bold">世界和平，消除歧视，反对战争，人人平等</p>
+  </section>
+</main>
+
+<script>
+  function showSection(sectionId) {
+    // 隐藏所有 section
+    document.querySelectorAll("main section").forEach(sec => {
+      sec.classList.add("hidden");
+    });
+    // 显示选中的 section
+    document.getElementById(sectionId).classList.remove("hidden");
+  }
+</script>
+
+</body>
+</html>
 
 
 
