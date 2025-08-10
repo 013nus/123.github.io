@@ -1,11 +1,84 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8" />
-    <title>我的个人网站</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>我的个人网站</title>
+<style>
+  body {
+    margin: 0;
+    font-family: "微软雅黑", sans-serif;
+    display: flex;
+    height: 100vh;
+  }
+  nav {
+    width: 180px;
+    background-color: #f0f0f0;
+    padding: 20px;
+    box-sizing: border-box;
+    border-right: 1px solid #ccc;
+  }
+  nav button {
+    width: 100%;
+    margin-bottom: 15px;
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+  }
+  nav button:hover {
+    background-color: #e0e0ff;
+  }
+  main {
+    flex-grow: 1;
+    padding: 30px;
+    box-sizing: border-box;
+  }
+  .hidden {
+    display: none;
+  }
+  h1 {
+    margin-top: 0;
+  }
+  .center-blue-bold {
+    color: #0055cc;
+    font-weight: bold;
+    text-align: center;
+    font-size: 20px;
+    margin-top: 60px;
+  }
+  .qrcode {
+    max-width: 150px;
+    margin: 10px 10px 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+  }
+  .qrcode-container {
+    display: flex;
+    align-items: center;
+  }
+</style>
 </head>
 <body>
-    <h1>欢迎来到我的个人网站！</h1>
-    <p>这里是我的第一个 GitHub Pages 网站，亲爱的~</p>
-</body>
-</html>
+
+<nav>
+  <button id="btnAbout">关于我</button>
+  <button id="btnPhilosophy">我的理念</button>
+</nav>
+
+<main>
+  <section id="introSection">
+    <h1>你好，我是宝宝</h1>
+    <p>欢迎来到我的个人网站！这里是我的简单介绍区。</p>
+  </section>
+
+  <section id="aboutSection" class="hidden">
+    <h2>关于我</h2>
+    <div class="qrcode-container">
+      <div>
+        <p>微信二维码</p>
+        <img src="https://via.placeholder.com/150?text=微信二维码" alt="微信二维码" class="qrcode" />
+      </div>
