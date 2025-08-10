@@ -8,62 +8,57 @@
   body {
     margin: 0;
     font-family: "微软雅黑", sans-serif;
-    display: flex;
     height: 100vh;
-    background: linear-gradient(135deg, #d7e1ec, #f5f7fa);
+    overflow-x: hidden;
+  }
+
+  /* 顶部汉堡按钮 */
+  .menu-btn {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    font-size: 26px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    z-index: 2000;
   }
 
   /* 侧边栏 */
   nav {
+    position: fixed;
+    top: 0;
+    left: -220px; /* 初始隐藏 */
     width: 200px;
-    background: linear-gradient(180deg, #0055cc, #003f99);
-    color: white;
+    height: 100%;
+    background-color: #f0f0f0;
+    border-right: 1px solid #ccc;
     padding: 20px;
     box-sizing: border-box;
-    border-right: 1px solid #0044aa;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    position: relative;      /* <- 确保不被覆盖 */
-    z-index: 1000;           /* <- 提升到最上层 */
+    transition: left 0.3s ease;
+    z-index: 1500;
   }
-
-  /* 按钮样式 */
+  nav.show {
+    left: 0;
+  }
   nav button {
     width: 100%;
     margin-bottom: 15px;
-    padding: 12px;
+    padding: 10px;
     font-size: 16px;
     cursor: pointer;
     background-color: white;
-    color: #0055cc;
-    border: none;
-    border-radius: 6px;
-    font-weight: bold;
-    transition: all 0.25s ease;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    transition: background-color 0.3s;
   }
-
   nav button:hover {
-    background-color: #0077ff;
-    color: white;
-    box-shadow: 0 0 10px rgba(0, 119, 255, 0.8);
-  }
-
-  nav button:active {
-    transform: scale(0.95);
+    background-color: #e0e0ff;
   }
 
   main {
-    flex-grow: 1;
     padding: 30px;
     box-sizing: border-box;
-    animation: fadeIn 0.5s ease;
-    position: relative;
-  }
-
-  @keyframes fadeIn {
-    from {opacity: 0;}
-    to {opacity: 1;}
   }
 
   .hidden {
@@ -84,70 +79,35 @@
 
   .qrcode {
     max-width: 150px;
-    margin: 10px;
+    margin: 10px 10px 10px 0;
     border: 1px solid #ccc;
     border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    transition: transform 0.3s ease;
-    background: white;
-  }
-
-  .qrcode:hover {
-    transform: scale(1.05);
   }
 
   .qrcode-container {
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
-  }
-
-  .support-container {
-    text-align: center;
-    animation: fadeInUp 0.6s ease;
-  }
-
-  .support-text {
-    font-size: 16px;
-    color: #333;
-    margin-bottom: 20px;
-  }
-
-  .support-item {
-    margin-bottom: 20px;
-    animation: float 3s ease-in-out infinite;
-  }
-
-  .amount-label {
-    font-weight: bold;
-    color: #0055cc;
-    margin-bottom: 8px;
-    display: block;
-  }
-
-  @keyframes float {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-6px); }
-    100% { transform: translateY(0px); }
-  }
-
-  @keyframes fadeInUp {
-    from {opacity: 0; transform: translateY(20px);}
-    to {opacity: 1; transform: translateY(0);}
+    flex-wrap: wrap;
   }
 </style>
 </head>
 <body>
 
-<nav>
-  <button id="btnAbout" aria-label="关于我">关于我</button>
-  <button id="btnPhilosophy" aria-label="我的理念">我的理念</button>
-  <button id="btnSupport" aria-label="支持">支持</button>
+<!-- 汉堡按钮 -->
+<button class="menu-btn" onclick="toggleMenu()">☰</button>
+
+<!-- 侧边栏 -->
+<nav id="sidebar">
+  <button onclick="showSection('introSection')">主页</button>
+  <button onclick="showSection('aboutSection')">关于我</button>
+  <button onclick="showSection('philosophySection')">我的理念</button>
+  <button onclick="showSection('supportSection')">支持</button>
 </nav>
 
+<!-- 主体 -->
 <main>
   <section id="introSection">
-    <h1>Hey! I am Obnus! Welcome to my page!</h1>
+    <h1>hey! I am Obnus! Welcome my page!</h1>
     <p>欢迎来到我的个人网站！这里是我的简单介绍区。</p>
   </section>
 
@@ -170,58 +130,44 @@
   </section>
 
   <section id="supportSection" class="hidden">
-    <div class="support-container">
-      <p class="support-text">如果您觉得不错，可以给点小小的支持来完善这个网页，谢谢您的鼓励！</p>
-      <div class="support-item">
-        <span class="amount-label">2 元</span>
-        <img src="photos/support2.jpg" alt="收款码 2元" class="qrcode" />
+    <p>如果您觉得不错，可以给点小小的支持来完善这个网页，谢谢您的鼓励！</p>
+    <div class="qrcode-container">
+      <div>
+        <p>2元</p>
+        <img src="photos/support_2.jpg" alt="2元收款码" class="qrcode" />
       </div>
-      <div class="support-item">
-        <span class="amount-label">5 元</span>
-        <img src="photos/support5.jpg" alt="收款码 5元" class="qrcode" />
+      <div>
+        <p>5元</p>
+        <img src="photos/support_5.jpg" alt="5元收款码" class="qrcode" />
       </div>
-      <div class="support-item">
-        <span class="amount-label">10 元</span>
-        <img src="photos/support10.jpg" alt="收款码 10元" class="qrcode" />
+      <div>
+        <p>10元</p>
+        <img src="photos/support_10.jpg" alt="10元收款码" class="qrcode" />
       </div>
     </div>
   </section>
 </main>
 
 <script>
-  // 安全的全局切换函数
-  function showSection(sectionId) {
-    // 隐藏所有内容区域
-    document.querySelectorAll("main section").forEach(sec => {
-      sec.classList.add("hidden");
-    });
-    // 显示指定的内容区域
-    const targetSection = document.getElementById(sectionId);
-    if (targetSection) {
-      targetSection.classList.remove("hidden");
-    }
-  }
+  function toggleMenu() {
+    document.getElementById('sidebar').classList.toggle('show');
+  }
 
-  // 等 DOM 就绪后再绑定事件
-  document.addEventListener('DOMContentLoaded', function() {
-    const btnAbout = document.getElementById("btnAbout");
-    const btnPhilosophy = document.getElementById("btnPhilosophy");
-    const btnSupport = document.getElementById("btnSupport");
+  function showSection(id) {
+    document.querySelectorAll('main section').forEach(sec => {
+      sec.classList.add('hidden');
+    });
+    document.getElementById(id).classList.remove('hidden');
+    toggleMenu(); // 切换完自动收起菜单
+  }
+</script>
 
-    // 给按钮添加点击事件监听器
-    btnAbout.addEventListener('click', function() {
-      // 点击“关于我”按钮时，显示 id 为 "aboutSection" 的内容
-      showSection('aboutSection');
-    });
+</body>
+</html>
 
-    btnPhilosophy.addEventListener('click', function() {
-      // 点击“我的理念”按钮时，显示 id 为 "philosophySection" 的内容
-      showSection('philosophySection');
-    });
-
-    btnSupport.addEventListener('click', function() {
       // 点击“支持”按钮时，显示 id 为 "supportSection" 的内容
       showSection('supportSection');
     });
   });
 </script>
+
