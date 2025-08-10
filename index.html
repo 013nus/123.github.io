@@ -10,39 +10,67 @@
     font-family: "微软雅黑", sans-serif;
     display: flex;
     height: 100vh;
+    background: linear-gradient(135deg, #d7e1ec, #f5f7fa);
   }
+
+  /* 侧边栏 */
   nav {
-    width: 180px;
-    background-color: #f0f0f0;
+    width: 200px;
+    background: linear-gradient(180deg, #0055cc, #003f99);
+    color: white;
     padding: 20px;
     box-sizing: border-box;
-    border-right: 1px solid #ccc;
+    border-right: 1px solid #0044aa;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
   }
+
+  /* 按钮样式 */
   nav button {
     width: 100%;
     margin-bottom: 15px;
-    padding: 10px;
+    padding: 12px;
     font-size: 16px;
     cursor: pointer;
     background-color: white;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    transition: background-color 0.3s;
+    color: #0055cc;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    transition: all 0.25s ease;
   }
+
   nav button:hover {
-    background-color: #e0e0ff;
+    background-color: #0077ff;
+    color: white;
+    box-shadow: 0 0 10px rgba(0, 119, 255, 0.8);
   }
+
+  nav button:active {
+    transform: scale(0.95);
+  }
+
   main {
     flex-grow: 1;
     padding: 30px;
     box-sizing: border-box;
+    animation: fadeIn 0.5s ease;
   }
+
+  @keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+  }
+
   .hidden {
     display: none;
   }
+
   h1 {
     margin-top: 0;
   }
+
   .center-blue-bold {
     color: #0055cc;
     font-weight: bold;
@@ -50,33 +78,75 @@
     font-size: 20px;
     margin-top: 60px;
   }
+
   .qrcode {
     max-width: 150px;
-    margin: 10px 10px 10px 0;
+    margin: 10px;
     border: 1px solid #ccc;
     border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
   }
+
+  .qrcode:hover {
+    transform: scale(1.05);
+  }
+
   .qrcode-container {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
+  }
+
+  .support-container {
+    text-align: center;
+    animation: fadeInUp 0.6s ease;
+  }
+
+  .support-text {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 20px;
+  }
+
+  .support-item {
+    margin-bottom: 20px;
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .amount-label {
+    font-weight: bold;
+    color: #0055cc;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  @keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-6px); }
+    100% { transform: translateY(0px); }
+  }
+
+  @keyframes fadeInUp {
+    from {opacity: 0; transform: translateY(20px);}
+    to {opacity: 1; transform: translateY(0);}
   }
 </style>
 </head>
 <body>
 
 <nav>
-  <button onclick="showSection('aboutSection')">关于我</button>
-  <button onclick="showSection('ideaSection')">我的理念</button>
+  <button id="btnAbout">关于我</button>
+  <button id="btnPhilosophy">我的理念</button>
+  <button id="btnSupport">支持</button>
 </nav>
 
 <main>
-  <!-- 主页介绍 -->
   <section id="introSection">
-    <h1>hey! i am Obnus! Welcome my page!</h1>
+    <h1>Hey! I am Obnus! Welcome to my page!</h1>
     <p>欢迎来到我的个人网站！这里是我的简单介绍区。</p>
   </section>
 
-  <!-- 关于我 -->
   <section id="aboutSection" class="hidden">
     <h2>关于我</h2>
     <div class="qrcode-container">
@@ -91,25 +161,47 @@
     </div>
   </section>
 
-  <!-- 我的理念 -->
-  <section id="ideaSection" class="hidden">
+  <section id="philosophySection" class="hidden">
     <p class="center-blue-bold">世界和平，消除歧视，反对战争，人人平等</p>
+  </section>
+
+  <section id="supportSection" class="hidden">
+    <div class="support-container">
+      <p class="support-text">如果您觉得不错，可以给点小小的支持来完善这个网页，谢谢您的鼓励！</p>
+      <div class="support-item">
+        <span class="amount-label">2 元</span>
+        <img src="photos/support2.jpg" alt="收款码 2元" class="qrcode" />
+      </div>
+      <div class="support-item">
+        <span class="amount-label">5 元</span>
+        <img src="photos/support5.jpg" alt="收款码 5元" class="qrcode" />
+      </div>
+      <div class="support-item">
+        <span class="amount-label">10 元</span>
+        <img src="photos/support10.jpg" alt="收款码 10元" class="qrcode" />
+      </div>
+    </div>
   </section>
 </main>
 
 <script>
-  function showSection(sectionId) {
-    // 隐藏所有 section
-    document.querySelectorAll("main section").forEach(sec => {
-      sec.classList.add("hidden");
-    });
-    // 显示选中的 section
-    document.getElementById(sectionId).classList.remove("hidden");
+  const btnAbout = document.getElementById("btnAbout");
+  const btnPhilosophy = document.getElementById("btnPhilosophy");
+  const btnSupport = document.getElementById("btnSupport");
+
+  const introSection = document.getElementById("introSection");
+  const aboutSection = document.getElementById("aboutSection");
+  const philosophySection = document.getElementById("philosophySection");
+  const supportSection = document.getElementById("supportSection");
+
+  function showSection(section) {
+    introSection.classList.add("hidden");
+    aboutSection.classList.add("hidden");
+    philosophySection.classList.add("hidden");
+    supportSection.classList.add("hidden");
+    section.classList.remove("hidden");
   }
-</script>
 
-</body>
-</html>
-
+  btnAbout.addEventLis
 
 
